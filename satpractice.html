@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAT Practice</title>
+<style>
+  :root {
+    --blue: #1a56db;
+    --blue-light: #e8f0fe;
+    --blue-dark: #1240a8;
+    --green: #0d9349;
+    --green-light: #d1fae5;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --yellow: #d97706;
+    --yellow-light: #fef3c7;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-400: #9ca3af;
+    --gray-600: #4b5563;
+    --gray-800: #1f2937;
+    --radius: 10px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-lg: 0 4px 20px rgba(0,0,0,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    min-height: 100vh;
+  }
+  /* NAV */
+  nav {
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .nav-logo {
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--blue);
+    margin-right: 16px;
+    letter-spacing: -0.3px;
+  }
+  .nav-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-600);
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { background: var(--gray-100); color: var(--gray-800); }
+  .nav-btn.active { background: var(--blue-light); color: var(--blue); }
+  .nav-spacer { flex: 1; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: var(--red);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+  /* VIEWS */
+  .view { display: none; max-width: 720px; margin: 0 auto; padding: 28px 20px; }
+  .view.active { display: block; }
+  /* CARDS */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-200);
+  }
+  .card + .card { margin-top: 14px; }
+  .card-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 12px;
+  }
+  /* DASHBOARD */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .stat-box {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .stat-num {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--blue);
+    line-height: 1;
+  }
+  .stat-num.red { color: var(--red); }
+  .stat-num.green { color: var(--green); }
+  .stat-label {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .big-btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 12px;
+  }
+  .big-btn:hover { background: var(--blue-dark); }
+  .big-btn:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+  .big-btn.outline {
+    background: white;
+    color: var(--blue);
+    border: 2px solid var(--blue);
+  }
+  .big-btn.outline:hover { background: var(--blue-light); }
+  /* PRACTICE */
+  #practice-view .question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .q-counter { font-size: 13px; color: var(--gray-400); font-weight: 500; }
+  .q-category {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .question-text {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--gray-800);
+    margin-bottom: 22px;
+    white-space: pre-wrap;
+  }
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    background: white;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-align: left;
+    font-size: 15px;
+    line-height: 1.5;
+    transition: all 0.15s;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--blue); background: var(--blue-light); }
+  .choice-letter {
+    min-width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--gray-100);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-600);
+    flex-shrink: 0;
+  }
+  .choice-btn.correct { border-color: var(--green); background: var(--green-light); }
+  .choice-btn.correct .choice-letter { background: var(--green); color: white; }
+  .choice-btn.wrong { border-color: var(--red); background: var(--red-light); }
+  .choice-btn.wrong .choice-letter { background: var(--red); color: white; }
+  .choice-btn.dim { opacity: 0.45; }
+  .choice-btn:disabled { cursor: default; }
+  .result-bar {
+    display: none;
+    margin-top: 20px;
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 15px;
+    align-items: center;
+    gap: 10px;
+  }
+  .result-bar.show { display: flex; }
+  .result-bar.correct-bar { background: var(--green-light); color: var(--green); }
+  .result-bar.wrong-bar { background: var(--red-light); color: var(--red); }
+  .result-icon { font-size: 20px; }
+  .result-note { font-size: 13px; font-weight: 400; color: var(--gray-600); margin-top: 2px; }
+  .next-btn {
+    margin-top: 16px;
+    padding: 12px 28px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: none;
+    transition: background 0.15s;
+  }
+  .next-btn:hover { background: var(--blue-dark); }
+  .next-btn.show { display: inline-block; }
+  .progress-bar-wrap {
+    height: 5px;
+    background: var(--gray-200);
+    border-radius: 3px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  /* SESSION COMPLETE */
+  .session-complete {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .session-complete h2 { font-size: 26px; margin-bottom: 8px; }
+  .session-complete p { color: var(--gray-600); margin-bottom: 24px; }
+  .score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 6px solid var(--blue);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+  }
+  .score-pct { font-size: 30px; font-weight: 700; color: var(--blue); }
+  .score-sub { font-size: 12px; color: var(--gray-400); }
+  /* ADD QUESTION */
+  .form-group { margin-bottom: 18px; }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 6px;
+  }
+  input, textarea, select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--gray-800);
+    background: white;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--blue); }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+  .choice-inputs { display: flex; flex-direction: column; gap: 8px; }
+  .choice-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .choice-input-label {
+    min-width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--gray-200);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-600);
+    flex-shrink: 0;
+  }
+  .correct-radio { display: flex; gap: 10px; flex-wrap: wrap; }
+  .radio-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .radio-option input { display: none; }
+  .radio-option.selected { border-color: var(--green); background: var(--green-light); color: var(--green); }
+  .submit-btn {
+    padding: 12px 28px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .submit-btn:hover { background: var(--blue-dark); }
+  .success-msg {
+    padding: 10px 14px;
+    background: var(--green-light);
+    color: var(--green);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+    margin-top: 12px;
+  }
+  /* HISTORY */
+  .session-item {
+    padding: 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    background: white;
+    margin-bottom: 10px;
+  }
+  .session-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .session-date { font-size: 14px; font-weight: 600; }
+  .session-score {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .session-score.good { background: var(--green-light); color: var(--green); }
+  .session-score.ok { background: var(--yellow-light); color: var(--yellow); }
+  .session-score.bad { background: var(--red-light); color: var(--red); }
+  .wrong-list { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+  .wrong-q-preview {
+    display: flex;
+    gap: 8px;
+    padding: 6px 10px;
+    background: var(--red-light);
+    border-radius: 6px;
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--red);
+    align-items: flex-start;
+  }
+  .wrong-q-preview strong { min-width: 20px; }
+  .expand-btn {
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: var(--blue);
+    cursor: pointer;
+    padding: 4px 0;
+    font-weight: 600;
+  }
+  /* BROWSE */
+  .question-list-item {
+    padding: 14px 16px;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .q-preview-text {
+    font-size: 14px;
+    color: var(--gray-800);
+    line-height: 1.5;
+    flex: 1;
+  }
+  .q-meta { display: flex; gap: 8px; align-items: center; flex-shrink: 0; flex-direction: column; text-align: right; }
+  .due-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--yellow-light);
+    color: var(--yellow);
+  }
+  .due-badge.overdue { background: var(--red-light); color: var(--red); }
+  .due-badge.ok { background: var(--green-light); color: var(--green); }
+  .del-btn {
+    background: none;
+    border: none;
+    color: var(--gray-400);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 2px;
+    line-height: 1;
+  }
+  .del-btn:hover { color: var(--red); }
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .filter-chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--gray-200);
+    background: white;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-chip.active { background: var(--blue); color: white; border-color: var(--blue); }
+  /* EMPTY STATES */
+  .empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--gray-400);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty h3 { font-size: 16px; color: var(--gray-600); margin-bottom: 6px; }
+  .empty p { font-size: 14px; }
+  /* INTERVALS */
+  .interval-info { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+  /* TOOLTIP */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  /* MODAL */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: white;
+    border-radius: var(--radius);
+    padding: 28px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: var(--shadow-lg);
+  }
+  .modal h3 { font-size: 18px; margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+  .btn-sm {
+    padding: 8px 16px;
+    border-radius: 7px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-sm.primary { background: var(--blue); color: white; }
+  .btn-sm.primary:hover { background: var(--blue-dark); }
+  .btn-sm.ghost { background: var(--gray-100); color: var(--gray-600); }
+  .btn-sm.ghost:hover { background: var(--gray-200); }
+  .btn-sm.danger { background: var(--red); color: white; }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">SAT Practice</span>
+  <button class="nav-btn active" onclick="showView('dash')" id="nav-dash">Dashboard</button>
+  <button class="nav-btn" onclick="showView('practice')" id="nav-practice">Practice <span id="due-badge" class="badge" style="display:none"></span></button>
+  <button class="nav-btn" onclick="showView('add')" id="nav-add">+ Add Question</button>
+  <button class="nav-btn" onclick="showView('browse')" id="nav-browse">Browse</button>
+  <button class="nav-btn" onclick="showView('history')" id="nav-history">History</button>
+</nav>
+
+<!-- DASHBOARD -->
+<div class="view active" id="dash-view">
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-num" id="stat-total">0</div>
+      <div class="stat-label">Total Questions</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num red" id="stat-due">0</div>
+      <div class="stat-label">Due for Review</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num green" id="stat-sessions">0</div>
+      <div class="stat-label">Sessions Done</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="stat-grid" style="margin-bottom:0">
+      <div class="stat-box" style="box-shadow:none;border:none;padding:10px">
+        <div class="stat-num" id="stat-accuracy" style="font-size:22px">—</div>
+        <div class="stat-label">Overall Accuracy</div>
+      </div>
+      <div class="stat-box" style="box-shadow:none;border:none;padding:10px">
+        <div class="stat-num" id="stat-streak" style="font-size:22px">0</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+      <div class="stat-box" style="box-shadow:none;border:none;padding:10px">
+        <div class="stat-num" id="stat-mastered" style="font-size:22px">0</div>
+        <div class="stat-label">Mastered</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="big-btn" id="dash-practice-btn" onclick="startPractice()">Start Practice Session</button>
+  <button class="big-btn outline" onclick="showView('add')">Add New Question</button>
+  <button class="big-btn outline" onclick="document.getElementById('import-file').click()" style="margin-top:0;border-color:var(--green);color:var(--green)">⬆ Import from College Board JSON</button>
+  <input type="file" id="import-file" accept=".json" style="display:none" onchange="importJSON(this)">
+  <div id="import-msg" style="display:none;padding:10px 14px;background:var(--green-light);color:var(--green);border-radius:8px;font-size:14px;font-weight:600;margin-top:8px"></div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">Sync Across Devices</div>
+    <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px">Export your full progress (questions, scores, history) as a backup file. Import it on another device to pick up where you left off.</p>
+    <div style="display:flex;gap:10px">
+      <button class="btn-sm primary" onclick="exportBackup()" style="flex:1">⬇ Export Backup</button>
+      <button class="btn-sm ghost" onclick="document.getElementById('backup-file').click()" style="flex:1">⬆ Import Backup</button>
+    </div>
+    <input type="file" id="backup-file" accept=".json" style="display:none" onchange="importBackup(this)">
+    <div id="backup-msg" style="display:none;padding:10px 14px;background:var(--green-light);color:var(--green);border-radius:8px;font-size:14px;font-weight:600;margin-top:10px"></div>
+  </div>
+
+  <div class="card" id="recent-wrongs-card" style="display:none; margin-top:4px">
+    <div class="card-title">Recently Missed</div>
+    <div id="recent-wrongs-list"></div>
+  </div>
+</div>
+
+<!-- PRACTICE -->
+<div class="view" id="practice-view">
+  <div id="practice-inner">
+    <div class="empty" id="practice-empty" style="display:none">
+      <div class="empty-icon">🎉</div>
+      <h3>Nothing due right now!</h3>
+      <p>All caught up. Add more questions or come back tomorrow.</p>
+    </div>
+    <div id="practice-content" style="display:none">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="card">
+        <div class="question-header">
+          <span class="q-counter" id="q-counter"></span>
+          <span class="q-category" id="q-category"></span>
+        </div>
+        <div class="question-text" id="question-text"></div>
+        <div class="choices" id="choices-container"></div>
+        <div class="result-bar" id="result-bar">
+          <span class="result-icon" id="result-icon"></span>
+          <div>
+            <div id="result-text"></div>
+            <div class="result-note" id="result-note"></div>
+          </div>
+        </div>
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+    </div>
+    <div id="session-complete-view" class="card session-complete" style="display:none">
+      <h2>Session Complete! 🎓</h2>
+      <p id="session-subtitle"></p>
+      <div class="score-circle">
+        <span class="score-pct" id="final-score"></span>
+        <span class="score-sub">correct</span>
+      </div>
+      <div id="session-wrong-preview" style="margin-bottom:20px"></div>
+      <button class="big-btn" onclick="showView('dash')">Back to Dashboard</button>
+      <button class="big-btn outline" style="margin-top:0" onclick="startPractice()">Practice Again</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD QUESTION -->
+<div class="view" id="add-view">
+  <div class="card">
+    <div class="card-title">New Question</div>
+    <div class="form-group">
+      <label>Question Text (paste from College Board)</label>
+      <textarea id="q-text" placeholder="Enter the full question text here..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Answer Choices</label>
+      <div class="choice-inputs">
+        <div class="choice-input-row">
+          <span class="choice-input-label">A</span>
+          <input type="text" id="choice-a" placeholder="Choice A">
+        </div>
+        <div class="choice-input-row">
+          <span class="choice-input-label">B</span>
+          <input type="text" id="choice-b" placeholder="Choice B">
+        </div>
+        <div class="choice-input-row">
+          <span class="choice-input-label">C</span>
+          <input type="text" id="choice-c" placeholder="Choice C">
+        </div>
+        <div class="choice-input-row">
+          <span class="choice-input-label">D</span>
+          <input type="text" id="choice-d" placeholder="Choice D">
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Correct Answer</label>
+      <div class="correct-radio">
+        <label class="radio-option" id="radio-a" onclick="selectAnswer('A')">A</label>
+        <label class="radio-option" id="radio-b" onclick="selectAnswer('B')">B</label>
+        <label class="radio-option" id="radio-c" onclick="selectAnswer('C')">C</label>
+        <label class="radio-option" id="radio-d" onclick="selectAnswer('D')">D</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Category</label>
+      <select id="q-category-input">
+        <option value="">— Select —</option>
+        <option value="Reading & Writing">Reading & Writing</option>
+        <option value="Math">Math</option>
+        <option value="Algebra">Algebra</option>
+        <option value="Advanced Math">Advanced Math</option>
+        <option value="Problem Solving">Problem Solving & Data Analysis</option>
+        <option value="Geometry">Geometry & Trigonometry</option>
+        <option value="Craft & Structure">Craft & Structure</option>
+        <option value="Information & Ideas">Information & Ideas</option>
+        <option value="Expression of Ideas">Expression of Ideas</option>
+        <option value="Standard English">Standard English Conventions</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Question ID / Source (optional)</label>
+      <input type="text" id="q-source" placeholder="e.g. CB-Q1042 or just a note">
+    </div>
+    <div class="form-group">
+      <label>Notes / Explanation (optional)</label>
+      <textarea id="q-notes" placeholder="Explanation or tips for why the answer is correct..." style="min-height:60px"></textarea>
+    </div>
+    <button class="submit-btn" onclick="addQuestion()">Save Question</button>
+    <div class="success-msg" id="add-success">✓ Question saved! Due for review today.</div>
+  </div>
+</div>
+
+<!-- BROWSE -->
+<div class="view" id="browse-view">
+  <div class="filter-row" id="filter-row">
+    <button class="filter-chip active" onclick="setFilter('all', this)">All</button>
+    <button class="filter-chip" onclick="setFilter('due', this)">Due Today</button>
+  </div>
+  <div id="browse-list"></div>
+</div>
+
+<!-- HISTORY -->
+<div class="view" id="history-view">
+  <div id="history-list"></div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-bg" id="del-modal">
+  <div class="modal">
+    <h3>Delete Question?</h3>
+    <p style="color:var(--gray-600);font-size:14px">This will permanently remove the question and all its history.</p>
+    <div class="modal-actions">
+      <button class="btn-sm ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA LAYER ────────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'sat_practice_v1';
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return { questions: [], sessions: [], lastSession: null, streak: 0, lastStreakDate: null };
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+let db = loadData();
+
+// ─── SM-2 ALGORITHM ────────────────────────────────────────────────────────────
+// Quality: 0 = wrong, 1 = correct (hard), 2 = correct (easy)
+function sm2Update(q, quality) {
+  const now = Date.now();
+  if (quality === 0) {
+    // Wrong: reset to 1 day, decay ease
+    q.interval = 1;
+    q.easeFactor = Math.max(1.3, q.easeFactor - 0.2);
+  } else {
+    if (!q.interval || q.interval === 0) {
+      q.interval = quality === 2 ? 4 : 1;
+    } else if (q.interval === 1) {
+      q.interval = 6;
+    } else {
+      q.interval = Math.round(q.interval * q.easeFactor);
+    }
+    if (quality === 2) q.easeFactor = Math.min(2.8, q.easeFactor + 0.1);
+    else q.easeFactor = Math.max(1.3, q.easeFactor - 0.05);
+  }
+  q.dueDate = now + q.interval * 86400000;
+  return q;
+}
+
+function isDue(q) {
+  return !q.dueDate || q.dueDate <= Date.now();
+}
+
+function dueIn(q) {
+  if (!q.dueDate || isDue(q)) return 0;
+  return Math.ceil((q.dueDate - Date.now()) / 86400000);
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function uuid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+function fmtDate(ts) {
+  return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function fmtTime(ts) {
+  return new Date(ts).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+function truncate(str, n) {
+  return str && str.length > n ? str.slice(0, n) + '…' : str;
+}
+
+function getDueQuestions() {
+  return db.questions.filter(isDue);
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+let currentView = 'dash';
+
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(name + '-view').classList.add('active');
+  document.getElementById('nav-' + name)?.classList.add('active');
+  currentView = name;
+
+  if (name === 'dash') renderDash();
+  if (name === 'practice') renderPractice();
+  if (name === 'browse') renderBrowse();
+  if (name === 'history') renderHistory();
+  updateBadge();
+}
+
+function updateBadge() {
+  const n = getDueQuestions().length;
+  const badge = document.getElementById('due-badge');
+  if (n > 0) { badge.textContent = n; badge.style.display = ''; }
+  else badge.style.display = 'none';
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+function renderDash() {
+  const due = getDueQuestions();
+  document.getElementById('stat-total').textContent = db.questions.length;
+  document.getElementById('stat-due').textContent = due.length;
+  document.getElementById('stat-sessions').textContent = db.sessions.length;
+
+  // Accuracy
+  let totalAttempts = 0, totalCorrect = 0;
+  db.questions.forEach(q => {
+    (q.history || []).forEach(h => { totalAttempts++; if (h.correct) totalCorrect++; });
+  });
+  document.getElementById('stat-accuracy').textContent =
+    totalAttempts ? Math.round(totalCorrect / totalAttempts * 100) + '%' : '—';
+
+  // Streak
+  document.getElementById('stat-streak').textContent = db.streak || 0;
+
+  // Mastered: interval >= 21 days
+  const mastered = db.questions.filter(q => q.interval >= 21).length;
+  document.getElementById('stat-mastered').textContent = mastered;
+
+  // CTA
+  const btn = document.getElementById('dash-practice-btn');
+  if (db.questions.length === 0) {
+    btn.textContent = 'Add Questions to Start';
+    btn.disabled = true;
+  } else if (due.length === 0) {
+    btn.textContent = 'Nothing Due — Check Back Later';
+    btn.disabled = true;
+  } else {
+    btn.textContent = `Start Practice Session (${due.length} due)`;
+    btn.disabled = false;
+  }
+
+  // Recently missed
+  const recentWrongs = [];
+  db.sessions.slice(-5).reverse().forEach(s => {
+    (s.wrongIds || []).forEach(id => {
+      const q = db.questions.find(q => q.id === id);
+      if (q) recentWrongs.push(q);
+    });
+  });
+  const card = document.getElementById('recent-wrongs-card');
+  const list = document.getElementById('recent-wrongs-list');
+  if (recentWrongs.length > 0) {
+    card.style.display = '';
+    list.innerHTML = [...new Set(recentWrongs.map(q => q.id))].slice(0, 5).map(id => {
+      const q = db.questions.find(q => q.id === id);
+      if (!q) return '';
+      const errCount = (q.history || []).filter(h => !h.correct).length;
+      return `<div class="wrong-q-preview">
+        <strong>✗ ${errCount}x</strong>
+        <span>${truncate(q.question, 80)}</span>
+      </div>`;
+    }).join('');
+  } else {
+    card.style.display = 'none';
+  }
+}
+
+// ─── PRACTICE SESSION ────────────────────────────────────────────────────────
+let session = null; // { queue, idx, wrong, sessionId }
+
+function startPractice() {
+  const due = getDueQuestions();
+  if (due.length === 0) { showView('dash'); return; }
+  session = {
+    queue: shuffle(due),
+    idx: 0,
+    wrong: [],
+    sessionId: uuid(),
+    start: Date.now()
+  };
+  showView('practice');
+}
+
+function renderPractice() {
+  const empty = document.getElementById('practice-empty');
+  const content = document.getElementById('practice-content');
+  const complete = document.getElementById('session-complete-view');
+
+  if (!session) {
+    // Check if there's anything due
+    const due = getDueQuestions();
+    if (due.length === 0 && db.questions.length > 0) {
+      empty.style.display = ''; content.style.display = 'none'; complete.style.display = 'none';
+    } else if (db.questions.length === 0) {
+      empty.style.display = ''; content.style.display = 'none'; complete.style.display = 'none';
+    } else {
+      startPractice();
+    }
+    return;
+  }
+  empty.style.display = 'none'; complete.style.display = 'none';
+  content.style.display = '';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (!session || session.idx >= session.queue.length) {
+    showSessionComplete();
+    return;
+  }
+  const q = session.queue[session.idx];
+  const total = session.queue.length;
+  const idx = session.idx;
+  const pct = (idx / total * 100).toFixed(1);
+
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('q-counter').textContent = `${idx + 1} / ${total}`;
+  document.getElementById('q-category').textContent = q.category || 'General';
+  document.getElementById('question-text').textContent = q.question;
+
+  const container = document.getElementById('choices-container');
+  const letters = ['A', 'B', 'C', 'D'];
+  container.innerHTML = q.choices.map((c, i) => `
+    <button class="choice-btn" onclick="answer('${letters[i]}', this)" data-letter="${letters[i]}">
+      <span class="choice-letter">${letters[i]}</span>
+      <span>${c}</span>
+    </button>
+  `).join('');
+
+  const rb = document.getElementById('result-bar');
+  rb.className = 'result-bar';
+  document.getElementById('next-btn').className = 'next-btn';
+}
+
+function answer(letter, btn) {
+  if (!session) return;
+  const q = session.queue[session.idx];
+  const correct = letter === q.correct;
+
+  // Disable all buttons
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+    const l = b.dataset.letter;
+    if (l === q.correct) b.classList.add('correct');
+    else if (l === letter && !correct) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+
+  // Record
+  const now = Date.now();
+  if (!q.history) q.history = [];
+  q.history.push({ date: now, correct, sessionId: session.sessionId });
+
+  // SM-2
+  sm2Update(q, correct ? 1 : 0);
+
+  if (!correct) session.wrong.push(q.id);
+
+  saveData(db);
+
+  // Result bar
+  const rb = document.getElementById('result-bar');
+  const daysNext = Math.round(q.interval);
+  rb.className = 'result-bar show ' + (correct ? 'correct-bar' : 'wrong-bar');
+  document.getElementById('result-icon').textContent = correct ? '✓' : '✗';
+  document.getElementById('result-text').textContent = correct
+    ? 'Correct!'
+    : `Incorrect — correct answer was ${q.correct}`;
+
+  let note = '';
+  if (q.notes) note = q.notes;
+  else if (correct) note = `Next review in ${daysNext} day${daysNext !== 1 ? 's' : ''}`;
+  else note = `You'll see this again in ${daysNext} day${daysNext !== 1 ? 's' : ''}`;
+  document.getElementById('result-note').textContent = note;
+  document.getElementById('next-btn').className = 'next-btn show';
+}
+
+function nextQuestion() {
+  session.idx++;
+  renderQuestion();
+}
+
+function showSessionComplete() {
+  const content = document.getElementById('practice-content');
+  const complete = document.getElementById('session-complete-view');
+  content.style.display = 'none';
+  complete.style.display = '';
+
+  const total = session.queue.length;
+  const wrong = session.wrong.length;
+  const correct = total - wrong;
+  const pct = Math.round(correct / total * 100);
+
+  document.getElementById('final-score').textContent = pct + '%';
+  document.getElementById('session-subtitle').textContent =
+    `${correct} correct, ${wrong} missed out of ${total} questions`;
+
+  // Wrong preview
+  const preview = document.getElementById('session-wrong-preview');
+  if (wrong > 0) {
+    const wrongQs = session.wrong.slice(0, 5).map(id => db.questions.find(q => q.id === id)).filter(Boolean);
+    preview.innerHTML = `<div style="text-align:left;margin-bottom:4px;font-size:13px;font-weight:600;color:var(--red)">Missed this session:</div>` +
+      wrongQs.map(q => `<div class="wrong-q-preview" style="margin-bottom:6px">
+        <strong>✗</strong><span>${truncate(q.question, 90)}</span>
+      </div>`).join('');
+  } else {
+    preview.innerHTML = `<div style="font-size:14px;color:var(--green);margin-bottom:16px;font-weight:600">Perfect round! 🎉</div>`;
+  }
+
+  // Save session
+  const s = {
+    id: session.sessionId,
+    date: session.start,
+    total,
+    correct,
+    wrongIds: [...new Set(session.wrong)]
+  };
+  db.sessions.push(s);
+
+  // Update streak
+  updateStreak();
+  saveData(db);
+
+  // Reset session
+  session = null;
+  updateBadge();
+}
+
+function updateStreak() {
+  const today = new Date().toDateString();
+  if (db.lastStreakDate === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (db.lastStreakDate === yesterday) {
+    db.streak = (db.streak || 0) + 1;
+  } else if (db.lastStreakDate !== today) {
+    db.streak = 1;
+  }
+  db.lastStreakDate = today;
+}
+
+// ─── ADD QUESTION ────────────────────────────────────────────────────────────
+let selectedAnswer = '';
+
+function selectAnswer(letter) {
+  selectedAnswer = letter;
+  ['A','B','C','D'].forEach(l => {
+    document.getElementById('radio-' + l.toLowerCase()).classList.toggle('selected', l === letter);
+  });
+}
+
+function addQuestion() {
+  const question = document.getElementById('q-text').value.trim();
+  const choiceA = document.getElementById('choice-a').value.trim();
+  const choiceB = document.getElementById('choice-b').value.trim();
+  const choiceC = document.getElementById('choice-c').value.trim();
+  const choiceD = document.getElementById('choice-d').value.trim();
+  const category = document.getElementById('q-category-input').value;
+  const source = document.getElementById('q-source').value.trim();
+  const notes = document.getElementById('q-notes').value.trim();
+
+  if (!question) return alert('Please enter the question text.');
+  if (!choiceA || !choiceB || !choiceC || !choiceD) return alert('Please fill in all 4 choices.');
+  if (!selectedAnswer) return alert('Please select the correct answer.');
+
+  const q = {
+    id: uuid(),
+    question,
+    choices: [choiceA, choiceB, choiceC, choiceD],
+    correct: selectedAnswer,
+    category: category || 'General',
+    source,
+    notes,
+    createdAt: Date.now(),
+    interval: 1,
+    easeFactor: 2.5,
+    dueDate: Date.now(), // due immediately
+    history: []
+  };
+
+  db.questions.push(q);
+  saveData(db);
+  updateBadge();
+
+  // Reset form
+  document.getElementById('q-text').value = '';
+  document.getElementById('choice-a').value = '';
+  document.getElementById('choice-b').value = '';
+  document.getElementById('choice-c').value = '';
+  document.getElementById('choice-d').value = '';
+  document.getElementById('q-category-input').value = '';
+  document.getElementById('q-source').value = '';
+  document.getElementById('q-notes').value = '';
+  selectedAnswer = '';
+  ['A','B','C','D'].forEach(l => document.getElementById('radio-' + l.toLowerCase()).classList.remove('selected'));
+
+  const msg = document.getElementById('add-success');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 2500);
+}
+
+// ─── BROWSE ──────────────────────────────────────────────────────────────────
+let browseFilter = 'all';
+let deleteTargetId = null;
+
+function setFilter(f, chip) {
+  browseFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  renderBrowse();
+}
+
+function renderBrowse() {
+  const filterRow = document.getElementById('filter-row');
+  // Rebuild category chips
+  const cats = [...new Set(db.questions.map(q => q.category).filter(Boolean))];
+  const staticChips = [
+    `<button class="filter-chip ${browseFilter==='all'?'active':''}" onclick="setFilter('all',this)">All</button>`,
+    `<button class="filter-chip ${browseFilter==='due'?'active':''}" onclick="setFilter('due',this)">Due Today</button>`
+  ];
+  const catChips = cats.map(c =>
+    `<button class="filter-chip ${browseFilter===c?'active':''}" onclick="setFilter('${c}',this)">${c}</button>`
+  );
+  filterRow.innerHTML = [...staticChips, ...catChips].join('');
+
+  let qs = db.questions;
+  if (browseFilter === 'due') qs = qs.filter(isDue);
+  else if (browseFilter !== 'all') qs = qs.filter(q => q.category === browseFilter);
+
+  const list = document.getElementById('browse-list');
+  if (db.questions.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📝</div><h3>No questions yet</h3><p>Add questions using the button above.</p></div>`;
+    return;
+  }
+  if (qs.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">✓</div><h3>None matching filter</h3></div>`;
+    return;
+  }
+
+  list.innerHTML = qs.map(q => {
+    const errCount = (q.history || []).filter(h => !h.correct).length;
+    const attempts = (q.history || []).length;
+    const d = dueIn(q);
+    let dueBadge = '';
+    if (isDue(q)) dueBadge = `<span class="due-badge overdue">Due now</span>`;
+    else dueBadge = `<span class="due-badge ok">In ${d}d</span>`;
+    return `<div class="question-list-item">
+      <div>
+        <div class="q-preview-text">${truncate(q.question, 100)}</div>
+        <div style="font-size:12px;color:var(--gray-400);margin-top:6px">
+          ${q.category} · ${attempts} attempt${attempts!==1?'s':''} · ${errCount} error${errCount!==1?'s':''}
+          ${q.source ? ' · ' + q.source : ''}
+        </div>
+      </div>
+      <div class="q-meta">
+        ${dueBadge}
+        <span style="font-size:12px;color:var(--gray-400)">${q.interval}d interval</span>
+        <button class="del-btn" onclick="promptDelete('${q.id}')" title="Delete">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function promptDelete(id) {
+  deleteTargetId = id;
+  document.getElementById('del-modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('del-modal').classList.remove('show');
+  deleteTargetId = null;
+}
+
+function confirmDelete() {
+  if (!deleteTargetId) return;
+  db.questions = db.questions.filter(q => q.id !== deleteTargetId);
+  saveData(db);
+  closeModal();
+  renderBrowse();
+  updateBadge();
+}
+
+// ─── HISTORY ────────────────────────────────────────────────────────────────
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  if (db.sessions.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><h3>No sessions yet</h3><p>Complete a practice session to see your history.</p></div>`;
+    return;
+  }
+  list.innerHTML = [...db.sessions].reverse().map((s, i) => {
+    const pct = Math.round(s.correct / s.total * 100);
+    const cls = pct >= 80 ? 'good' : pct >= 60 ? 'ok' : 'bad';
+    const wrongQs = (s.wrongIds || []).map(id => db.questions.find(q => q.id === id)).filter(Boolean);
+    const wrongHtml = wrongQs.length > 0
+      ? wrongQs.map(q => `<div class="wrong-q-preview" style="margin-bottom:4px">
+          <strong>✗</strong><span>${truncate(q.question, 80)}</span>
+        </div>`).join('')
+      : `<span style="color:var(--green);font-size:13px">Perfect — no mistakes!</span>`;
+
+    const expanded = i < 1; // expand most recent by default
+    return `<div class="session-item">
+      <div class="session-item-header">
+        <div>
+          <div class="session-date">${fmtDate(s.date)} at ${fmtTime(s.date)}</div>
+          <div style="font-size:13px;color:var(--gray-400)">${s.total} questions · ${s.correct} correct</div>
+        </div>
+        <span class="session-score ${cls}">${pct}%</span>
+      </div>
+      <div id="sess-detail-${s.id}" style="${expanded ? '' : 'display:none'}">
+        <div class="wrong-list">
+          <div style="font-size:12px;font-weight:600;color:var(--gray-400);margin-bottom:6px">MISSED QUESTIONS</div>
+          ${wrongHtml}
+        </div>
+      </div>
+      ${wrongQs.length > 0 || !expanded ? `<button class="expand-btn" onclick="toggleSession('${s.id}', this)">${expanded ? 'Hide' : 'Show'} missed questions</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function toggleSession(id, btn) {
+  const el = document.getElementById('sess-detail-' + id);
+  const hidden = el.style.display === 'none';
+  el.style.display = hidden ? '' : 'none';
+  btn.textContent = hidden ? 'Hide missed questions' : 'Show missed questions';
+}
+
+// ─── IMPORT JSON ─────────────────────────────────────────────────────────────
+function importJSON(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      const incoming = parsed.questions || (Array.isArray(parsed) ? parsed : []);
+      if (!incoming.length) return alert('No questions found in file.');
+
+      const existingIds = new Set(db.questions.map(q => q.externalId || q.id));
+      let added = 0, skipped = 0;
+      const now = Date.now();
+
+      incoming.forEach(q => {
+        const dupKey = q.externalId || q.id;
+        if (existingIds.has(dupKey)) { skipped++; return; }
+        // Ensure required fields
+        if (!q.question || !q.choices || !q.correct) { skipped++; return; }
+        db.questions.push({
+          ...q,
+          id: q.id || uuid(),
+          interval: q.interval || 1,
+          easeFactor: q.easeFactor || 2.5,
+          dueDate: q.dueDate || now,
+          history: q.history || [],
+          createdAt: q.createdAt || now
+        });
+        existingIds.add(dupKey);
+        added++;
+      });
+
+      saveData(db);
+      updateBadge();
+      renderDash();
+
+      const msg = document.getElementById('import-msg');
+      msg.style.display = 'block';
+      msg.textContent = `✓ Imported ${added} questions (${skipped} skipped as duplicates)`;
+      setTimeout(() => msg.style.display = 'none', 4000);
+      input.value = '';
+    } catch(err) {
+      alert('Error reading file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ─── BACKUP EXPORT / IMPORT ─────────────────────────────────────────────────
+function exportBackup() {
+  const data = loadData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const date = new Date().toISOString().slice(0, 10);
+  a.download = `sat-backup-${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importBackup(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const incoming = JSON.parse(e.target.result);
+      if (!incoming.questions || !Array.isArray(incoming.questions)) {
+        return alert('This does not look like a valid backup file.');
+      }
+      const mergeChoice = db.questions.length > 0
+        ? confirm(`You already have ${db.questions.length} questions locally.\n\nOK = Merge (keep both, skip duplicates)\nCancel = Replace (overwrite local data with backup)`)
+        : false;
+
+      if (mergeChoice) {
+        const existingIds = new Set(db.questions.map(q => q.id));
+        let added = 0;
+        incoming.questions.forEach(q => {
+          if (!existingIds.has(q.id)) {
+            db.questions.push(q);
+            existingIds.add(q.id);
+            added++;
+          }
+        });
+        incoming.sessions?.forEach(s => {
+          if (!db.sessions.find(ex => ex.id === s.id)) db.sessions.push(s);
+        });
+        saveData(db);
+        showBackupMsg(`Merged ${added} new questions.`);
+      } else {
+        db = incoming;
+        db.sessions = db.sessions || [];
+        db.streak = db.streak || 0;
+        db.lastStreakDate = db.lastStreakDate || null;
+        saveData(db);
+        showBackupMsg(`Restored backup: ${db.questions.length} questions, ${db.sessions.length} sessions.`);
+      }
+
+      renderDash();
+      updateBadge();
+      input.value = '';
+    } catch(err) {
+      alert('Error reading backup: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function showBackupMsg(text) {
+  const msg = document.getElementById('backup-msg');
+  msg.textContent = '✓ ' + text;
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 4000);
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+renderDash();
+updateBadge();
+</script>
+</body>
+</html>
