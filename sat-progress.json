@@ -3873,14 +3873,19 @@
       "notes": "Choice C is the best answer. “Spans” means “extends over a distance of” or “encompasses.” Since we’re talking about the world’s largest plant, it makes sense to say that it “spans” about 200 square kilometers. Choice A is incorrect. “Acknowledges” means “recognizes” or “admits the truth of.” Either way, it doesn’t make sense here: a plant can’t “acknowledge” a distance. Choice B is incorrect. “Produces” can mean “makes,” “causes,” or “presents.” But none of those definitions make sense here: a plant can’t make, cause, or present a distance. Choice D is incorrect. This doesn’t fit the logic of the text. “Advances” means “moves forward” or “progresses.” But the plant isn’t necessarily moving forward. Rather, the text suggests that it already covers a distance of 200 square kilometers.",
       "difficulty": "Easy",
       "skill": "Words in Context",
-      "interval": 6,
-      "easeFactor": 2.45,
-      "dueDate": 1786841897934,
+      "interval": 15,
+      "easeFactor": 2.4000000000000004,
+      "dueDate": 1790993561632,
       "history": [
         {
           "date": 1786323497934,
           "correct": true,
           "sessionId": "msltthgp0y096kts6wce"
+        },
+        {
+          "date": 1789697561632,
+          "correct": true,
+          "sessionId": "mu6bp6mjn6lbhvs9zs"
         }
       ],
       "createdAt": 1786114135915
