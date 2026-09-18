@@ -9753,10 +9753,16 @@
       "notes": "Choice D is the best answer. The comma appropriately separates the nonessential descriptive aside \"such as…scene\" from the independent clause \"Theaters were…movie.\" Since the descriptive example of roses isn’t necessary for the sentence to function, it needs to be set off with punctuation.Choice A is incorrect. This choice results in a run-on sentence. Since the example of roses isn’t necessary for the sentence to function, the descriptive aside \"such as…scene\" needs to be separated from the preceding independent clause with some sort of punctuation. Choice B is incorrect. This choice creates a punctuation error. A semicolon can only be used to separate two independent clauses, but \"such…scene\" is not an independent clause and couldn’t stand on its own as a sentence. Choice C is incorrect. This choice results in a sentence fragment. The descriptive aside \"Such…scene\" is not an independent clause and can’t stand on its own as a sentence.",
       "difficulty": "Medium",
       "skill": "Boundaries",
-      "interval": 1,
-      "easeFactor": 2.5,
-      "dueDate": 1786114339320,
-      "history": [],
+      "interval": 6,
+      "easeFactor": 2.45,
+      "dueDate": 1790215937776,
+      "history": [
+        {
+          "date": 1789697537776,
+          "correct": true,
+          "sessionId": "mu6bp6mjn6lbhvs9zs"
+        }
+      ],
       "createdAt": 1786114339320
     },
     {
