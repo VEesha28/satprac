@@ -9914,14 +9914,19 @@
       "notes": "Choice A is the best answer. The convention being tested is the use of punctuation within a sentence. This choice uses a semicolon in a conventional way to join the first main clause (“That...Chulalongkorn”) and the second main clause (“deterring...achievement”).Choice B is incorrect. Using the conjunction “that” to introduce “deterring...achievement” as a subordinate element of the main clause (“That...Chulalongkorn”) results in a confusing and ungrammatical sentence. Choice C is incorrect because it results in a comma splice. Without a conjunction following it, a comma can’t be used in this way to join two main clauses. Choice D is incorrect because it results in a run-on sentence. The two main clauses are fused without punctuation and/or a conjunction.",
       "difficulty": "Hard",
       "skill": "Boundaries",
-      "interval": 6,
-      "easeFactor": 2.45,
-      "dueDate": 1786891412553,
+      "interval": 1,
+      "easeFactor": 2.25,
+      "dueDate": 1789906774065,
       "history": [
         {
           "date": 1786373012553,
           "correct": true,
           "sessionId": "msltthgp0y096kts6wce"
+        },
+        {
+          "date": 1789820374065,
+          "correct": false,
+          "sessionId": "mu8csfh8w4slt63r0oc"
         }
       ],
       "createdAt": 1786114341501
@@ -12271,9 +12276,15 @@
       "difficulty": "Hard",
       "skill": "Command of Evidence",
       "interval": 1,
-      "easeFactor": 2.5,
-      "dueDate": 1786114820244,
-      "history": [],
+      "easeFactor": 2.3,
+      "dueDate": 1789906719914,
+      "history": [
+        {
+          "date": 1789820319914,
+          "correct": false,
+          "sessionId": "mu8csfh8w4slt63r0oc"
+        }
+      ],
       "createdAt": 1786114820244
     },
     {
